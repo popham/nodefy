@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var nodify = require('../index');
+var nfy = require('../index');
 var _cli = require('commander');
 
 _cli
@@ -13,7 +13,7 @@ _cli
 
 if (_cli.args.length) {
     var files = _cli.args;
-    nodify.batchConvert(files, _cli.output, function(err, results) {
+    nfy.batchConvert(files, _cli.output, function(err, results) {
         if (err) throw err;
         if (! _cli.output) {
             results = results.map(function(r) {
@@ -35,7 +35,7 @@ if (_cli.args.length) {
     });
 
     process.stdin.on('end', function(){
-        var result = nodify.parse(buf);
+        var result = nfy.parse(buf);
         if (_cli.output) {
             require('fs').writeFileSync(_cli.output, result);
         } else {

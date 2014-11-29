@@ -1,7 +1,7 @@
 {
-  "name": "nodify",
+  "name": "nfy",
   "version": "0.0.0",
-  "description": "Nodefy fork. Do globbing in the shell, and allow circular dependencies for modules that return an object.",
+  "description": "Nodefy fork. Export globbing to the shell. Allow circular dependencies for modules that return an object.",
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/jasmine-node test"
@@ -21,7 +21,7 @@
     "jasmine-node" : "1.x"
   },
   "bin" : {
-    "nodify" : "bin/nodify"
+    "nfy" : "bin/nfy"
   },
   "engine" : {
     "node" : ">= 0.8"
