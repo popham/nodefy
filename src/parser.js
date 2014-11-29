@@ -1,6 +1,4 @@
-
 var esprima = require('esprima');
-
 
 var MAGIC_DEPS = {
     'exports' : true,
@@ -10,10 +8,8 @@ var MAGIC_DEPS = {
 
 var SIMPLIFIED_CJS = ['require', 'exports', 'module'];
 
-
-
 // Convert AMD-style JavaScript string into node.js compatible module
-exports.parse = function(raw){
+exports.parse = function (raw) {
     var output = '';
     var ast = esprima.parse(raw, {
         range: true,
@@ -22,7 +18,7 @@ exports.parse = function(raw){
 
     var defines = ast.body.filter(isDefine);
 
-    if ( defines.length > 1 ){
+    if (defines.length > 1){
         throw new Error('Each file can have only a single define call. Found "'+ defines.length +'"');
     } else if (!defines.length){
         return raw;
@@ -47,10 +43,10 @@ exports.parse = function(raw){
 };
 
 
-function getRequires(args, factory){
+function getRequires(args, factory) {
     var requires = [];
     var deps = getDependenciesNames( args );
-    var params = factory.params.map(function(param, i){
+    var params = factory.params.map(function (param, i) {
         return {
             name : param.name,
             // simplified cjs doesn't have deps
@@ -58,7 +54,7 @@ function getRequires(args, factory){
         };
     });
 
-    params.forEach(function(param){
+    params.forEach(function (param) {
         if ( MAGIC_DEPS[param.dep] && !MAGIC_DEPS[param.name] ) {
             // if user remaped magic dependency we declare a var
             requires.push( 'var '+ param.name +' = '+ param.dep +';' );
@@ -72,22 +68,20 @@ function getRequires(args, factory){
     return requires.join('\n');
 }
 
-
-function getDependenciesNames(args){
+function getDependenciesNames(args) {
     var deps = [];
     var arr = args.filter(function(arg){
         return arg.type === 'ArrayExpression';
     })[0];
 
     if (arr) {
-        deps = arr.elements.map(function(el){
+        deps = arr.elements.map(function (el) {
             return el.value;
         });
     }
 
     return deps;
 }
-
 
 function isDefine(node){
     return node.type === 'ExpressionStatement' &&
@@ -96,16 +90,15 @@ function isDefine(node){
            node.expression.callee.name === 'define';
 }
 
-
 function getFactory(args){
-    return args.filter(function(arg){
+    return args.filter(function (arg) {
         return arg.type === 'FunctionExpression';
     })[0];
 }
 
 
-function getBody(raw, factoryBody, useStrict){
-    var returnStatement = factoryBody.body.filter(function(node){
+function getBody(raw, factoryBody, useStrict) {
+    var returnStatement = factoryBody.body.filter(function (node) {
         return node.type === 'ReturnStatement';
     })[0];
 
@@ -117,7 +110,7 @@ function getBody(raw, factoryBody, useStrict){
         switch (returnStatement.argument.type) {
         case 'ObjectExpression':
             if (returnStatement.argument.properties.length > 0) {
-                returnStatement.argument.properties.forEach(function(prop){
+                returnStatement.argument.properties.forEach(function (prop) {
                     switch (prop.key.type) {
                     case 'Identifier':
                         body += 'exports.'+ prop.key.name +' = ';
@@ -147,15 +140,12 @@ function getBody(raw, factoryBody, useStrict){
     return body;
 }
 
-
-function getUseStrict(factory){
+function getUseStrict(factory) {
     return factory.body.body.filter(isUseStrict)[0];
 }
 
-
-function isUseStrict(node){
+function isUseStrict(node) {
     return node.type === 'ExpressionStatement' &&
             node.expression.type === 'Literal' &&
             node.expression.value === 'use strict';
 }
-

@@ -6,18 +6,11 @@ var _mkdirp = require('mkdirp');
 
 var _parser = require('./parser');
 
-// Read file content and output into destination path.
-exports.convert = function(inputPath, outputPath, callback) {
-    // outputPath is optional
-    if (typeof outputPath === 'function' && arguments.length < 3) {
-        callback = outputPath;
-        outputPath = null;
-    }
-
-    _fs.readFile(inputPath, function(err, content) {
+exports.convert = function (inputPath, outputPath, callback) {
+    _fs.readFile(inputPath, function (err, content) {
         if (!err) {
             try {
-                content = _parser.parse( content.toString() );
+                content = _parser.parse(content.toString());
             } catch(e) {
                 err = e;
             }
@@ -31,12 +24,12 @@ exports.convert = function(inputPath, outputPath, callback) {
         if (!outputPath) {
             callback(null, content);
         } else {
-            safeCreateDir(outputPath, function(err) {
+            safeCreateDir(outputPath, function (err) {
                 if (err) {
                     callback(err);
                     return;
                 }
-                _fs.writeFile(outputPath, content, function(err) {
+                _fs.writeFile(outputPath, content, function (err) {
                     callback(err, content);
                 });
             });
@@ -54,27 +47,43 @@ function safeCreateDir(filePath, callback) {
     }
 }
 
-// Read folder content and output files into output folder
-exports.batchConvert = function(files, outputFolder, callback) {
-    // outputFolder is optional
-    if (typeof outputFolder === 'function' && arguments.length < 3) {
-        callback = outputFolder;
-        outputFolder = null;
-    }
+exports.batchConvert = function (files, srcPrefix, outputFolder, callback) {
+    if (outputFolder === null) outputFolder = process.cwd();
+    else outputFolder = _path.resolve(outputFolder);
 
-    var rootFolder = getRoot(files);
+    if (srcPrefix === null) srcPrefix = process.cwd();
+    else srcPrefix = _path.resolve(srcPrefix);
 
-    // convert all files in parallel
-    _async.map(files, function(sourcePath, cb) {
-        var relativePath = sourcePath.replace(rootFolder, '');
-        var outputPath = outputFolder? _path.join(outputFolder, relativePath) : null;
+    srcPrefix = srcPrefix.split(_path.sep);
 
-        exports.convert(sourcePath, outputPath, function(err, result) {
+    files = files
+        .map(function (name) { return _path.resolve(name); })
+        .map(function (name) {
+            var target = name.split(_path.sep);
+            for (var i=0; i<srcPrefix.length; ++i) {
+                // Failed match
+                if (target[i] !== srcPrefix[i]) {
+                    throw new Error('The source file \''+name+'\' does not descend from the src-prefix directory, \''+srcPrefix.join(_path.sep)+'\'');
+                }
+            }
+
+            // Successful match
+            return {
+                source : name,
+                target : _path.join(
+                    outputFolder,
+                    target.slice(srcPrefix.length).join(_path.sep)
+                )
+            };
+        });
+
+    _async.map(files, function (name, cb) {
+        exports.convert(name.source, name.target, function (err, result) {
             cb(
                 err,
                 {
-                    sourcePath : sourcePath,
-                    outputPath : outputPath,
+                    sourcePath : name.source,
+                    outputPath : name.target,
                     result : result
                 }
             );
@@ -82,18 +91,3 @@ exports.batchConvert = function(files, outputFolder, callback) {
 
     }, callback);
 };
-
-// get root folder based on smallest path length
-function getRoot(paths) {
-    var result, tmp;
-    var compare = Infinity;
-
-    paths.forEach(function(path, i) {
-        if (path.length < compare) {
-            compare = path.length;
-            result = path;
-        }
-    });
-
-    return _path.dirname(result);
-}

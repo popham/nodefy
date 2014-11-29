@@ -9,9 +9,11 @@ var _converter = require('./src/converter');
 exports.parse = _parser.parse;
 
 /**
- * Read glob content and output files into output folder
- * @param String[] files - Files that should be converted
- * @param String [outputFolder]
+ * Map AMD files to Node files.
+ * @param String[] files - AMD file paths that get converted.
+ * @param String srcPrefix - Filename prefix to remove from files prior to
+ * output.
+ * @param String outputFolder - Base directory to receive Node files.
  * @param Function callback(err, results)
  */
 exports.batchConvert = _converter.batchConvert;
