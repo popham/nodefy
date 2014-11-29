@@ -4,7 +4,7 @@
   "description": "Nodefy fork. Export globbing to the shell. Allow circular dependencies for modules that return an object.",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/jasmine-node test"
+    "test": "jasmine-node test"
   },
   "repository": {
     "type": "git",
