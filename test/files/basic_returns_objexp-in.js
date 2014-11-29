@@ -1,16 +1,15 @@
 // test comment
-define(['foo', '../bar/baz'], function (foo, baz) {
+var foo = require('foo');
+var baz = require('../bar/baz');
 
     // another comment
     var ipsum = 'dolor amet';
 
-    return {
-        doFoo: function(){
+    exports.doFoo = function(){
             foo.bar( baz.dolor, ipsum );
-        },
-        doBar: function(){
+        };
+exports.doBar = function(){
             baz.dolor();
-        }
-    };
-});
+        };
+
 

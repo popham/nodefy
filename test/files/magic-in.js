@@ -1,7 +1,7 @@
 /**
  * multi-line comment
  */
-define(['exports', 'foo'], function (exports, foo) {
+var foo = require('foo');
 
     /*
      * another comment
@@ -11,5 +11,5 @@ define(['exports', 'foo'], function (exports, foo) {
     // commented out code
     // exports.foo = foo;
 
-});
+
 

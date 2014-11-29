@@ -1,45 +1,37 @@
-
 var SHOULD_PURGE = true;
 
-// ---
+var fs = require('fs');
+var path = require('path');
 
-var _fs = require('fs');
-var _path = require('path');
-
-// ---
-
-
-exports.readIn = function(id){
-    return exports.readFile( __dirname +'/files/'+  id +'-in.js' );
+exports.readIn = function (id) {
+    return exports.readFile(__dirname +'/files/'+  id +'-in.js');
 };
 
-
-exports.readOut = function(id){
-    return exports.readFile( __dirname +'/files/'+  id +'-out.js' );
+exports.readOut = function (id) {
+    return exports.readFile(__dirname +'/files/'+  id +'-out.js');
 };
 
-
-exports.readFile = function(path){
-    return _fs.readFileSync(path).toString();
+exports.readFile = function (p) {
+    return fs.readFileSync(p).toString();
 };
 
+exports.purge = function (dir) {
+    if (!SHOULD_PURGE) return;
 
-exports.purge = function(dir){
-    if (! SHOULD_PURGE) return;
-    _fs.readdirSync(dir).forEach(function(relPath){
-        var path = _path.join(dir, relPath);
-        if ( _fs.statSync(path).isDirectory() ){
-            exports.purge(path);
+    fs.readdirSync(dir).forEach(function (relPath) {
+        var p = path.join(dir, relPath);
+        if (fs.statSync(p).isDirectory()) {
+            exports.purge(p);
         } else {
-            _fs.unlinkSync(path);
+            fs.unlinkSync(p);
         }
     });
-    _fs.rmdirSync( dir );
+
+    fs.rmdirSync(dir);
 };
 
-
-exports.mkdir = function(dir){
-    if (! _fs.existsSync(dir) ) {
-        _fs.mkdirSync(dir);
+exports.mkdir = function (dir) {
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir);
     }
 };
