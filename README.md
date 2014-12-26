@@ -64,11 +64,11 @@ For instance, `nfy -o cjs --src-prefix=src src/**/*.js` would map
 
 It also works with `stdin` and `stdout`:
 
-    cat src/someFile.js | nodefy
+    cat src/someFile.js | nfy
 
 For a list of available options run:
 
-    nodefy -h
+    nfy -h
 
 ## Features, Goals & Limitations
 
