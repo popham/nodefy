@@ -9,7 +9,7 @@ var nullOnUndefined = function (arg) {
 };
 
 _cli
-    .version('0.0.2')
+    .version('0.0.3')
     .description('convert AMD modules into node.js compatible modules.')
     .usage('[options] <file ...>')
     .option(
