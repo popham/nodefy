@@ -1,6 +1,6 @@
 {
   "name": "nfy",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Nodefy fork. Export globbing to the shell. Allow circular dependencies for modules that return an object.",
   "main": "index.js",
   "scripts": {
