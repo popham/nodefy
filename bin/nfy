@@ -19,8 +19,7 @@ _cli
     )
     .option(
         '--src-prefix <prefix>',
-        'If a file specified for compilation starts with <prefix>, remove the prefix for\n'
-            +'the purpose of deciding the names of output files.',
+        'Remove <prefix> from the start of output file names.',
         nullOnUndefined
     )
     .option('--verbose', 'Verbose output. Will log each processed file.')
